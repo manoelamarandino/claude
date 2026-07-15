@@ -1,0 +1,14 @@
+{
+  "name": "research-triage-matrix",
+  "version": "1.0.0",
+  "description": "A static single-page tool for triaging evaluative research requests: score risk and confidence, plot the 2x2, and get a recommended approach to open the kickoff conversation.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "start": "node scripts/serve.js",
+    "serve": "node scripts/serve.js"
+  },
+  "keywords": ["ux-research", "triage", "static-site"],
+  "license": "MIT"
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Research Triage Matrix</title>
+    <meta
+      name="description"
+      content="Triage incoming evaluative research requests: score risk and confidence, plot the 2×2, and get a recommended research approach to open the kickoff conversation."
+    />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">Research Triage</span>
+        </div>
+        <nav class="nav">
+          <button type="button" class="nav-btn" data-nav="assessment">New assessment</button>
+          <button type="button" class="nav-btn" data-nav="log">Log</button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="app" class="container"><!-- views render here --></main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        A conversation starter, not a verdict · runs entirely in your browser · nothing leaves this device
+      </div>
+    </footer>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
