@@ -57,9 +57,9 @@ export const BLOCKS = [
     questions: [
       {
         id: 'q6',
-        text: 'If we get this wrong, how badly does it hurt the user?',
-        low: 'Mild annoyance, it looks dated',
-        high: "They can't complete their core task, or they make a costly error",
+        text: 'If the design doesn’t perform as expected, how much does it hurt the user’s main Job to be Done?',
+        low: 'A minor annoyance — the job still gets done',
+        high: 'It blocks their main Job to be Done, or leads to a costly error',
       },
       {
         id: 'q7',
