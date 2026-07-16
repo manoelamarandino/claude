@@ -9,7 +9,7 @@ Many don't — but there's no shared language for saying so, and recruitment is
 slow enough that saying yes to everything means everything takes months or gets
 tested on the same handful of users repeatedly.
 
-**How it works:** the designer answers 11 questions on 1–10 sliders. The app
+**How it works:** the designer answers 10 questions on 1–10 sliders. The app
 computes a weighted **RISK** score and a weighted **CONFIDENCE** score, plots them
 on a 2×2 matrix, checks a separate **ACCESS** constraint, and returns a
 recommended research approach with reasoning.
@@ -54,7 +54,7 @@ Pure logic is separated from the DOM so it stays testable:
 | File | Responsibility |
 | --- | --- |
 | `src/questions.js` | The 11-question set + anchor copy (pure data) |
-| `src/scoring.js` | RISK / CONFIDENCE / ACCESS formulas + overrides (pure) |
+| `src/scoring.js` | RISK / CONFIDENCE / ACCESS formulas + confidence override (pure) |
 | `src/flags.js` | The five flags (pure) |
 | `src/recommend.js` | Quadrant methods, access adjustment, "change your mind" (pure) |
 | `src/markdown.js` | Result → markdown export (pure) |
@@ -65,8 +65,7 @@ Pure logic is separated from the DOM so it stays testable:
 ### The scoring (see the spec for the why)
 
 ```
-RISK       = (Q6×0.4) + (Q7×0.3) + (Q8×0.2) + (Q9×0.1)
-             override: if Q8 ≥ 8, RISK = max(RISK, 7)
+RISK       = (Q6×0.5) + (Q7×0.375) + (Q9×0.125)
 
 CONFIDENCE = (Q1×0.3) + (Q3×0.3) + (Q2×0.2) + ((11−Q4)×0.2)
              override: if Q1 ≤ 4, CONFIDENCE = min(CONFIDENCE, 5)

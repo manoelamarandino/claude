@@ -6,12 +6,12 @@
 // biases everything toward "high", so don't.
 export const THRESHOLD = 5.5;
 
-// RISK = (Q6×0.4) + (Q7×0.3) + (Q8×0.2) + (Q9×0.1)
-// Override: if Q8 >= 8, RISK = max(RISK, 7). Regulatory/contractual exposure
-// must not average away.
+// RISK = (Q6×0.5) + (Q7×0.375) + (Q9×0.125)
+// Weights keep the original 4:3:1 proportions between harm-to-user, fix cost,
+// and reach, renormalised to sum to 1 after the business-exposure question was
+// removed. Harm to the user (Q6) is now the clear heaviest driver of risk.
 export function computeRisk(a) {
-  let risk = a.q6 * 0.4 + a.q7 * 0.3 + a.q8 * 0.2 + a.q9 * 0.1;
-  if (a.q8 >= 8) risk = Math.max(risk, 7);
+  const risk = a.q6 * 0.5 + a.q7 * 0.375 + a.q9 * 0.125;
   return round1(risk);
 }
 

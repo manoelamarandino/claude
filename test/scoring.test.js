@@ -18,7 +18,7 @@ import { cheapestThingToChangeMind, recommend } from '../src/recommend.js';
 
 // A helper to build a full answer set with sensible mid defaults, overridable.
 function answers(overrides = {}) {
-  const base = { q1: 5, q2: 5, q3: 5, q4: 5, q5: 1, q6: 5, q7: 5, q8: 5, q9: 5, q10: 5, q11: 5 };
+  const base = { q1: 5, q2: 5, q3: 5, q4: 5, q5: 1, q6: 5, q7: 5, q9: 5, q10: 5, q11: 5 };
   return { ...base, ...overrides };
 }
 
@@ -27,19 +27,19 @@ test('THRESHOLD is the true midpoint, not 5', () => {
 });
 
 test('RISK is the documented weighted sum', () => {
-  // (8×0.4)+(6×0.3)+(4×0.2)+(2×0.1) = 3.2+1.8+0.8+0.2 = 6.0
-  assert.equal(computeRisk(answers({ q6: 8, q7: 6, q8: 4, q9: 2 })), 6);
+  // (8×0.5)+(6×0.375)+(2×0.125) = 4+2.25+0.25 = 6.5
+  assert.equal(computeRisk(answers({ q6: 8, q7: 6, q9: 2 })), 6.5);
 });
 
-test('RISK override: Q8>=8 floors risk at 7', () => {
-  // Low everything but high business exposure — must not average away.
-  const r = computeRisk(answers({ q6: 1, q7: 1, q8: 8, q9: 1 }));
-  assert.equal(r, 7);
+test('RISK weights sum to 1 (max input gives max score)', () => {
+  assert.equal(computeRisk(answers({ q6: 10, q7: 10, q9: 10 })), 10);
 });
 
-test('RISK override does not lower an already-higher risk', () => {
-  // Raw = (10×0.4)+(10×0.3)+(8×0.2)+(10×0.1) = 4+3+1.6+1 = 9.6
-  assert.equal(computeRisk(answers({ q6: 10, q7: 10, q8: 8, q9: 10 })), 9.6);
+test('RISK is driven hardest by harm to the user (Q6)', () => {
+  // Same total input, concentrated on Q6 vs on Q9, should score higher on Q6.
+  const heavyOnHarm = computeRisk(answers({ q6: 10, q7: 1, q9: 1 }));
+  const heavyOnReach = computeRisk(answers({ q6: 1, q7: 1, q9: 10 }));
+  assert.ok(heavyOnHarm > heavyOnReach);
 });
 
 test('CONFIDENCE inverts Q4', () => {
@@ -79,7 +79,7 @@ test('quadrant assignment around 5.5', () => {
 });
 
 test('score() bundles everything', () => {
-  const s = score(answers({ q6: 10, q7: 10, q8: 10, q9: 10, q1: 2 }));
+  const s = score(answers({ q6: 10, q7: 10, q9: 10, q1: 2 }));
   assert.equal(s.quadrant, 'INVEST');
   assert.ok(s.confidence <= 5); // Q1<=4 cap applies
 });
@@ -98,7 +98,7 @@ test('unvalidated problem flag on Q1<=4', () => {
 });
 
 test('access gap flag: blocked access AND high risk', () => {
-  const a = answers({ q6: 10, q7: 10, q8: 10, q9: 10, q10: 1, q11: 1 });
+  const a = answers({ q6: 10, q7: 10, q9: 10, q10: 1, q11: 1 });
   const s = score(a);
   assert.ok(s.access < 4 && s.risk >= 5.5);
   assert.ok(computeFlags(a, s).some((f) => f.id === 'access-gap'));
@@ -128,7 +128,7 @@ test('cheapest thing tracks the lowest confidence contributor', () => {
 // --- recommend --------------------------------------------------------------
 
 test('INVEST with shaky problem confidence recommends discovery first', () => {
-  const a = answers({ q6: 10, q7: 10, q8: 2, q9: 8, q1: 2, q2: 2 });
+  const a = answers({ q6: 10, q7: 10, q9: 8, q1: 2, q2: 2 });
   const s = score(a);
   assert.equal(s.quadrant, 'INVEST');
   const rec = recommend(a, s);
@@ -136,7 +136,7 @@ test('INVEST with shaky problem confidence recommends discovery first', () => {
 });
 
 test('SHIP recommendation leads with what you get, never "no research"', () => {
-  const a = answers({ q1: 9, q2: 9, q3: 9, q4: 1, q6: 1, q7: 1, q8: 1, q9: 1 });
+  const a = answers({ q1: 9, q2: 9, q3: 9, q4: 1, q6: 1, q7: 1, q9: 1 });
   const s = score(a);
   assert.equal(s.quadrant, 'SHIP');
   const rec = recommend(a, s);

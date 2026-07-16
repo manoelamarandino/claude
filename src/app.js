@@ -36,7 +36,8 @@ function h(tag, attrs = {}, children = []) {
 }
 
 const app = document.getElementById('app');
-const RISK_QS = ['q6', 'q7', 'q8', 'q9'];
+const RISK_QS = ['q6', 'q7', 'q9'];
+const TOTAL = QUESTION_IDS.length;
 const CONFIDENCE_QS = ['q1', 'q2', 'q3', 'q4'];
 
 function todayISO() {
@@ -65,7 +66,7 @@ function render(view, payload) {
 function renderAssessment() {
   const answers = {}; // id -> number, only when touched
 
-  const counter = h('span', { class: 'counter' }, `0 of 11 answered`);
+  const counter = h('span', { class: 'counter' }, `0 of ${TOTAL} answered`);
   const submit = h(
     'button',
     { class: 'btn btn-primary', type: 'button', disabled: true, onclick: onSubmit },
@@ -74,8 +75,8 @@ function renderAssessment() {
 
   function refreshState() {
     const done = QUESTION_IDS.filter((id) => id in answers).length;
-    counter.textContent = `${done} of 11 answered`;
-    submit.disabled = done < 11;
+    counter.textContent = `${done} of ${TOTAL} answered`;
+    submit.disabled = done < TOTAL;
   }
 
   function sliderRow(q) {
@@ -192,7 +193,7 @@ function renderAssessment() {
   return h('div', { class: 'view view-assessment' }, [
     h('div', { class: 'intro' }, [
       h('h1', {}, 'Research triage'),
-      h('p', {}, 'Eleven quick reads on this design. The result is a starting point for the kickoff conversation — not a verdict. You’ll see your own answers next to whatever it proposes.'),
+      h('p', {}, 'A quick set of reads on this design. The result is a starting point for the kickoff conversation — not a verdict. You’ll see your own answers next to whatever it proposes.'),
     ]),
     meta,
     ...blocks,

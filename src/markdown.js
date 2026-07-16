@@ -4,7 +4,7 @@
 
 import { QUESTION_BY_ID } from './questions.js';
 
-const RISK_QS = ['q6', 'q7', 'q8', 'q9'];
+const RISK_QS = ['q6', 'q7', 'q9'];
 const CONFIDENCE_QS = ['q1', 'q2', 'q3', 'q4'];
 
 export function resultMarkdown(result) {

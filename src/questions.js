@@ -68,12 +68,6 @@ export const BLOCKS = [
         high: 'Re-architecture or release train, months',
       },
       {
-        id: 'q8',
-        text: 'How much business exposure is there? (revenue, compliance, contractual, reputational)',
-        low: 'Negligible',
-        high: 'Regulatory, contractual, or a named-account risk',
-      },
-      {
         id: 'q9',
         text: 'How many users does this touch?',
         low: 'A niche subset',
