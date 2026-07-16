@@ -6,6 +6,7 @@
 // large and last (on top of everything).
 
 import { THRESHOLD } from './scoring.js';
+import { QUADRANT_SHORT } from './recommend.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -45,11 +46,11 @@ export function renderMatrix(confidence, risk, active) {
 
   // Quadrant fills. Coordinates: high risk = top, high confidence = right.
   const quads = [
-    { id: 'INVEST', label: 'INVEST', x: PLOT.x0, y: PLOT.y0, w: tx - PLOT.x0, h: ty - PLOT.y0, lx: (PLOT.x0 + tx) / 2, ly: (PLOT.y0 + ty) / 2 },
-    { id: 'VERIFY', label: 'VERIFY', x: tx, y: PLOT.y0, w: PLOT.x1 - tx, h: ty - PLOT.y0, lx: (tx + PLOT.x1) / 2, ly: (PLOT.y0 + ty) / 2 },
-    { id: 'EXPLORE_CHEAP', label: 'EXPLORE CHEAP', x: PLOT.x0, y: ty, w: tx - PLOT.x0, h: PLOT.y1 - ty, lx: (PLOT.x0 + tx) / 2, ly: (ty + PLOT.y1) / 2 },
-    { id: 'SHIP', label: 'SHIP', x: tx, y: ty, w: PLOT.x1 - tx, h: PLOT.y1 - ty, lx: (tx + PLOT.x1) / 2, ly: (ty + PLOT.y1) / 2 },
-  ];
+    { id: 'INVEST', x: PLOT.x0, y: PLOT.y0, w: tx - PLOT.x0, h: ty - PLOT.y0, lx: (PLOT.x0 + tx) / 2, ly: (PLOT.y0 + ty) / 2 },
+    { id: 'VERIFY', x: tx, y: PLOT.y0, w: PLOT.x1 - tx, h: ty - PLOT.y0, lx: (tx + PLOT.x1) / 2, ly: (PLOT.y0 + ty) / 2 },
+    { id: 'EXPLORE_CHEAP', x: PLOT.x0, y: ty, w: tx - PLOT.x0, h: PLOT.y1 - ty, lx: (PLOT.x0 + tx) / 2, ly: (ty + PLOT.y1) / 2 },
+    { id: 'SHIP', x: tx, y: ty, w: PLOT.x1 - tx, h: PLOT.y1 - ty, lx: (tx + PLOT.x1) / 2, ly: (ty + PLOT.y1) / 2 },
+  ].map((q) => ({ ...q, label: QUADRANT_SHORT[q.id] }));
 
   for (const q of quads) {
     svg.appendChild(

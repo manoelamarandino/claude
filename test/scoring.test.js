@@ -127,21 +127,36 @@ test('cheapest thing tracks the lowest confidence contributor', () => {
 
 // --- recommend --------------------------------------------------------------
 
-test('INVEST with shaky problem confidence recommends discovery first', () => {
+test('low-confidence / high-risk maps to DISCOVER, a menu of discovery methods', () => {
   const a = answers({ q6: 10, q7: 10, q9: 8, q1: 2, q2: 2 });
   const s = score(a);
   assert.equal(s.quadrant, 'INVEST');
   const rec = recommend(a, s);
-  assert.match(rec.primary.method, /Discovery/i);
+  assert.equal(rec.meta.short, 'DISCOVER');
+  assert.ok(rec.methods.length > 0);
+  // Every method carries both sides of the trade-off.
+  for (const m of rec.methods) {
+    assert.ok(m.label && m.buys && m.leaves);
+  }
+  assert.ok(rec.methods.some((m) => /discovery/i.test(m.label)));
 });
 
-test('SHIP recommendation leads with what you get, never "no research"', () => {
+test('SHIP leads with what you get, never "no research"', () => {
   const a = answers({ q1: 9, q2: 9, q3: 9, q4: 1, q6: 1, q7: 1, q9: 1 });
   const s = score(a);
   assert.equal(s.quadrant, 'SHIP');
   const rec = recommend(a, s);
-  assert.match(rec.primary.method, /heuristic/i);
-  assert.doesNotMatch(rec.meta.blurb, /don.?t need research/i);
+  assert.equal(rec.meta.name, 'Ship it ASAP');
+  assert.ok(rec.methods.some((m) => /heuristic/i.test(m.label)));
+  assert.doesNotMatch(rec.meta.description, /don.?t need research/i);
+});
+
+test('every quadrant exposes a non-empty trade-off menu', () => {
+  for (const q of ['INVEST', 'VERIFY', 'EXPLORE_CHEAP', 'SHIP']) {
+    const rec = recommend(answers(), { ...score(answers()), quadrant: q });
+    assert.ok(rec.methods.length > 0, `${q} has methods`);
+    assert.ok(rec.meta.short && rec.meta.name && rec.meta.tagline);
+  }
 });
 
 test('access adjustment note reflects the band', () => {

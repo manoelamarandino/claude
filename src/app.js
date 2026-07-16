@@ -5,7 +5,7 @@
 import { BLOCKS, QUESTION_IDS, QUESTION_BY_ID } from './questions.js';
 import { score } from './scoring.js';
 import { computeFlags } from './flags.js';
-import { recommend } from './recommend.js';
+import { recommend, SCORE_DEFINITIONS, QUADRANT_SHORT } from './recommend.js';
 import { renderMatrix } from './matrix.js';
 import { resultMarkdown } from './markdown.js';
 import {
@@ -14,6 +14,7 @@ import {
   updateEntry,
   deleteEntry,
   summarize,
+  isOffMenu,
   toCsv,
   OUTCOME_OPTIONS,
 } from './storage.js';
@@ -182,7 +183,11 @@ function renderAssessment() {
       access: scores.access,
       accessBand: scores.band,
       quadrant: scores.quadrant,
-      recommendedMethod: rec.primary.method,
+      // The tool now recommends a quadrant/posture, not a single method. Store
+      // the quadrant recommendation for display, plus the suggested menu so the
+      // log can tell when a team went with a method that wasn't even listed.
+      recommendedMethod: rec.meta.name,
+      recommendedMethods: rec.methods.map((m) => m.label),
       flags: flags.map((f) => f.id),
       notes: project.notes,
     });
@@ -216,6 +221,7 @@ function scoreCard(title, value, questionIds, answers, invertedId) {
       h('span', { class: 'score-value' }, `${value}`),
       h('span', { class: 'score-max' }, '/ 10'),
     ]),
+    SCORE_DEFINITIONS[title] ? h('p', { class: 'score-def' }, SCORE_DEFINITIONS[title]) : null,
     h(
       'ul',
       { class: 'score-inputs' },
@@ -252,7 +258,7 @@ function renderResult(r) {
   const matrix = h('div', { class: 'matrix-card' }, [
     renderMatrix(scores.confidence, scores.risk, scores.quadrant),
     h('div', { class: 'matrix-caption' }, [
-      h('span', { class: `quad-pill quad-${scores.quadrant}` }, rec.meta.label),
+      h('span', { class: `quad-pill quad-${scores.quadrant}` }, rec.meta.short),
       h('span', {}, rec.meta.tagline),
     ]),
   ]);
@@ -268,22 +274,21 @@ function renderResult(r) {
   ]);
 
   const recBlock = h('div', { class: 'rec' }, [
-    h('div', { class: 'rec-blurb' }, rec.meta.blurb),
-    h('div', { class: 'rec-primary' }, [
-      h('span', { class: 'rec-eyebrow' }, 'Recommended approach'),
-      h('h3', {}, rec.primary.method),
-      h('p', {}, rec.primary.detail),
+    h('div', { class: 'rec-head' }, [
+      h('span', { class: `quad-pill quad-${scores.quadrant}` }, rec.meta.short),
+      h('h3', {}, rec.meta.name),
     ]),
-    h('div', { class: 'rec-alts' }, [
-      h('span', { class: 'rec-eyebrow' }, 'Alternatives'),
+    h('p', { class: 'rec-blurb' }, rec.meta.description),
+    h('div', { class: 'rec-methods' }, [
+      h('span', { class: 'rec-eyebrow' }, 'Possible methodologies — pick from the trade-offs'),
       h(
         'ul',
         {},
-        rec.alternatives.map((alt) =>
+        rec.methods.map((m) =>
           h('li', {}, [
-            h('strong', {}, alt.label),
-            h('span', { class: 'alt-buys' }, [h('b', {}, 'Buys: '), alt.buys]),
-            h('span', { class: 'alt-leaves' }, [h('b', {}, 'Leaves unanswered: '), alt.leaves]),
+            h('strong', {}, m.label),
+            h('span', { class: 'alt-buys' }, [h('b', {}, 'Buys: '), m.buys]),
+            h('span', { class: 'alt-leaves' }, [h('b', {}, 'Leaves unanswered: '), m.leaves]),
           ])
         )
       ),
@@ -323,7 +328,7 @@ function renderResult(r) {
 
 // --- log view ---------------------------------------------------------------
 
-const QUAD_LABEL = { INVEST: 'INVEST', VERIFY: 'VERIFY', EXPLORE_CHEAP: 'EXPLORE CHEAP', SHIP: 'SHIP' };
+const QUAD_LABEL = QUADRANT_SHORT;
 let logSort = { key: 'timestamp', dir: 'desc' };
 
 function renderLogView() {
@@ -332,9 +337,9 @@ function renderLogView() {
 
   const summary = h('div', { class: 'log-summary' }, [
     summaryStat('Total assessments', stats.total),
-    summaryStat('INVEST / VERIFY', `${stats.byQuadrant.INVEST} / ${stats.byQuadrant.VERIFY}`),
+    summaryStat('DISCOVER / CONFIRM', `${stats.byQuadrant.INVEST} / ${stats.byQuadrant.VERIFY}`),
     summaryStat('EXPLORE / SHIP', `${stats.byQuadrant.EXPLORE_CHEAP} / ${stats.byQuadrant.SHIP}`),
-    summaryStat('Overridden', stats.overridden, 'recommended ≠ method used'),
+    summaryStat('Off-menu picks', stats.offMenu, 'method used wasn’t a listed option'),
     summaryStat('Access-gap flags', stats.accessGaps, 'the recruitment case, quantified'),
     calibrationStat(stats.calibration),
   ]);
@@ -461,7 +466,7 @@ function buildLogTable(entries) {
       if (confirm('Delete this assessment from the log?')) { deleteEntry(e.id); render('log'); }
     } }, '✕');
 
-    const overridden = e.methodUsed && e.methodUsed.trim() && e.methodUsed.trim() !== e.recommendedMethod;
+    const overridden = isOffMenu(e);
 
     return h('tr', {}, [
       h('td', { class: 'nowrap' }, (e.timestamp || '').slice(0, 10)),

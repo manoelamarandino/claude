@@ -3,6 +3,7 @@
 // the designer's own inputs next to the recommendation — that's the whole point.
 
 import { QUESTION_BY_ID } from './questions.js';
+import { SCORE_DEFINITIONS } from './recommend.js';
 
 const RISK_QS = ['q6', 'q7', 'q9'];
 const CONFIDENCE_QS = ['q1', 'q2', 'q3', 'q4'];
@@ -15,7 +16,7 @@ export function resultMarkdown(result) {
   lines.push('');
   lines.push(`**Team / designer:** ${project.team || '—'}  `);
   lines.push(`**Date:** ${project.date}  `);
-  lines.push(`**Recommendation:** ${meta.label} — ${meta.tagline}`);
+  lines.push(`**Quadrant:** ${meta.short} — ${meta.name}. ${meta.tagline}`);
   lines.push('');
 
   if (flags.length) {
@@ -27,9 +28,9 @@ export function resultMarkdown(result) {
   }
 
   lines.push('## Scores');
-  lines.push(`- **RISK: ${scores.risk} / 10**`);
+  lines.push(`- **RISK: ${scores.risk} / 10** — _${SCORE_DEFINITIONS.RISK}_`);
   for (const id of RISK_QS) lines.push(`  - ${QUESTION_BY_ID[id].text} → **${answers[id]}**`);
-  lines.push(`- **CONFIDENCE: ${scores.confidence} / 10**`);
+  lines.push(`- **CONFIDENCE: ${scores.confidence} / 10** — _${SCORE_DEFINITIONS.CONFIDENCE}_`);
   for (const id of CONFIDENCE_QS) {
     const note = id === 'q4' ? ' _(inverted in scoring)_' : '';
     lines.push(`  - ${QUESTION_BY_ID[id].text} → **${answers[id]}**${note}`);
@@ -40,15 +41,15 @@ export function resultMarkdown(result) {
   lines.push(`**${rec.access.title}** — ${rec.access.text}`);
   lines.push('');
 
-  lines.push('## Recommended approach');
-  lines.push(`**${rec.primary.method}**`);
-  lines.push('');
-  lines.push(rec.primary.detail);
+  lines.push(`## ${meta.name}`);
+  lines.push(meta.description);
   lines.push('');
 
-  lines.push('## Alternatives');
-  for (const alt of rec.alternatives) {
-    lines.push(`- **${alt.label}** — buys: ${alt.buys} Leaves unanswered: ${alt.leaves}`);
+  lines.push('### Possible methodologies — pick from the trade-offs');
+  for (const m of rec.methods) {
+    lines.push(`- **${m.label}**`);
+    lines.push(`  - Buys: ${m.buys}`);
+    lines.push(`  - Leaves unanswered: ${m.leaves}`);
   }
   lines.push('');
 

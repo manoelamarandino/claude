@@ -77,8 +77,13 @@ Both axes split at **5.5** — the true midpoint of a 1–10 scale.
 
 |  | Low confidence (< 5.5) | High confidence (≥ 5.5) |
 | --- | --- | --- |
-| **High risk (≥ 5.5)** | INVEST | VERIFY |
+| **High risk (≥ 5.5)** | DISCOVER | CONFIRM |
 | **Low risk (< 5.5)** | EXPLORE CHEAP | SHIP |
+
+Each quadrant offers a **menu of possible methodologies** rather than a single
+verdict — every method names what it *buys* and what it *leaves unanswered*, so
+the team chooses from the trade-offs at kickoff. (Internally the quadrant IDs
+stay `INVEST` / `VERIFY` / `EXPLORE_CHEAP` / `SHIP` so saved logs keep working.)
 
 ## The log
 

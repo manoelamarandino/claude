@@ -1,163 +1,156 @@
 // Recommendation logic. Pure. Turns scores + raw answers into a proposal:
-// a primary method, alternatives, an access adjustment, and the single most
-// valuable line — the cheapest thing that would change your mind.
+// a menu of possible methodologies for the quadrant (each with its trade-off),
+// an access adjustment, and the single most valuable line — the cheapest thing
+// that would change your mind.
 //
-// Framing that matters (spec intro + §5): the output is NOT a verdict. It's the
-// opening position for a kickoff conversation. Copy here should sound like a
-// researcher who wants to help the team move fast, never a gatekeeper.
+// There is deliberately NO single "recommended" method. Triage is a choice from
+// a menu, not a verdict, so every methodology names what it BUYS and what it
+// LEAVES UNANSWERED, and the team picks based on the trade-off.
+//
+// Internal quadrant IDs (INVEST / VERIFY / EXPLORE_CHEAP / SHIP) are kept stable
+// so the saved log and calibration keep working; only the display names change.
 
-export const QUADRANT_META = {
+export const QUADRANTS = {
+  // Low confidence, high risk.
   INVEST: {
-    label: 'INVEST',
-    tagline: 'High risk, low confidence — the real thing.',
-    blurb:
-      'This is where full studies are justified. Don’t compress it — this is the quadrant ' +
-      'the whole tool exists to protect budget for.',
+    id: 'INVEST',
+    name: 'Needs more exploration',
+    short: 'DISCOVER',
+    tagline: 'Low confidence, high risk — step back before committing.',
+    description:
+      'We’re not confident in what we’re proposing, and the cost of getting it wrong is high. This is ' +
+      'the quadrant where the honest move might be to slow down — or even suggest changing the project. ' +
+      'Explore the problem properly before betting on this design.',
+    methods: [
+      {
+        label: 'Dealership visits (contextual observation)',
+        buys: 'First-hand context — how people really behave in the real setting, not how we picture it.',
+        leaves: 'It’s observation of the problem space, not proof this design solves it.',
+      },
+      {
+        label: 'Discovery interviews (4–6 users)',
+        buys: 'Whether we’re solving a real problem, and what actually matters to the people who have it.',
+        leaves: 'Nothing yet about whether this specific design is the right answer.',
+      },
+      {
+        label: 'Workshops with users or SMEs (subject-matter experts)',
+        buys: 'A lot of ground on needs, edge cases and constraints fast, with shared understanding in the room.',
+        leaves: 'Group settings can bury quiet disagreement — it’s input, not evidence of real use.',
+      },
+      {
+        label: 'Build a complete user journey',
+        buys: 'The end-to-end picture: where this design sits and which moments actually carry the risk.',
+        leaves: 'Maps the terrain; doesn’t test whether the design works at any single step.',
+      },
+    ],
   },
+
+  // High confidence, high risk.
   VERIFY: {
-    label: 'VERIFY',
-    tagline: 'High risk, high confidence — confirm the belief.',
-    blurb:
-      'Confidence is high but the cost of being wrong is real. You’re confirming a specific ' +
-      'belief, not exploring — so scope tightly.',
+    id: 'VERIFY',
+    name: 'Confirm',
+    short: 'CONFIRM',
+    tagline: 'High confidence, high risk — check before you commit.',
+    description:
+      'We’re fairly sure this is right, but the stakes are real: ship without checking and something ' +
+      'could break or move a financial metric. Do enough discovery to confirm — you don’t need to go as ' +
+      'deep as DISCOVER. Short on time? A few interviews to raise confidence is enough.',
+    methods: [
+      {
+        label: 'Moderated interviews / usability sessions (3–5 users)',
+        buys: 'Live confirmation on the riskiest task, with room to probe the “why”.',
+        leaves: 'Small sample, deliberately narrow — it confirms a belief, it won’t explore broadly.',
+      },
+      {
+        label: 'Build a complete user journey',
+        buys: 'Pinpoints exactly which moment carries the risk so you can aim the check.',
+        leaves: 'Heavier than a confirm usually needs — skip it if time is short.',
+      },
+      {
+        label: 'SME (subject-matter expert) interviews',
+        buys: 'A fast confidence boost from people who do this every day.',
+        leaves: 'A proxy for users, not the users themselves.',
+      },
+    ],
   },
+
+  // Low confidence, low risk.
   EXPLORE_CHEAP: {
-    label: 'EXPLORE CHEAP',
-    tagline: 'Low risk, low confidence — learn fast, learn cheap.',
-    blurb:
-      'Uncertain, but the downside is small. Learn cheaply, or just learn in production. ' +
-      'Post-launch data may be cheaper than pre-launch research here.',
+    id: 'EXPLORE_CHEAP',
+    name: 'Explore cheap',
+    short: 'EXPLORE CHEAP',
+    tagline: 'Low confidence, low risk — learn fast, learn cheap.',
+    description:
+      'We’re unsure of the path, but the worst case is mild user dissatisfaction — nothing breaks, no ' +
+      'financial metric moves, and we can reverse or improve it later. Keep it quick and cheap.',
+    methods: [
+      {
+        label: 'Unmoderated usability tests',
+        buys: 'Quick behavioural signal at low cost, no scheduling.',
+        leaves: 'No room to ask “why” when something surprises you.',
+      },
+      {
+        label: 'Talks with SMEs (subject-matter experts)',
+        buys: 'A fast expert read on the obvious problems, zero recruitment.',
+        leaves: 'Expert opinion, not real user behaviour.',
+      },
+      {
+        label: 'Quick chat with users — only if readily available',
+        buys: 'A dose of real-user reality without the delay.',
+        leaves: 'Not worth waiting months for at this low risk — if they’re not to hand, skip it.',
+      },
+      {
+        label: 'Heuristic evaluation (paired with another method)',
+        buys: 'Cheap coverage of common usability issues to round out the above.',
+        leaves: 'On its own it catches known pitfalls, not the surprises specific to your users.',
+      },
+    ],
   },
+
+  // High confidence, low risk.
   SHIP: {
-    label: 'SHIP',
-    tagline: 'Low risk, high confidence — here’s the fast thing you get.',
-    blurb:
-      'You’re in good shape. The research team’s contribution here is speed, not scrutiny — ' +
-      'a fast heuristic pass this week so you can move with a second set of eyes on it.',
+    id: 'SHIP',
+    name: 'Ship it ASAP',
+    short: 'SHIP',
+    tagline: 'High confidence, low risk — don’t hold it up.',
+    description:
+      'We’re confident and the downside is small — it won’t dent the user’s main Job to be Done, break ' +
+      'systems, or move financial metrics. The research team’s job here is speed. Real usage data from a ' +
+      'pilot or launch will be more reliable than anything we’d learn beforehand.',
+    methods: [
+      {
+        label: 'Heuristic evaluation (on its own)',
+        buys: 'A fast expert sanity pass this week — a second set of eyes, no recruitment, no delay.',
+        leaves: 'Expert judgment, not real behaviour — fine at this low risk.',
+      },
+      {
+        label: 'Unmoderated usability tests',
+        buys: 'A quick behavioural gut-check if you want one, still no scheduling.',
+        leaves: 'Won’t surface much you don’t already expect at this confidence.',
+      },
+      {
+        label: 'Unmoderated interviews with SMEs (subject-matter experts)',
+        buys: 'Light reassurance from experts, asynchronously.',
+        leaves: 'Proxy input; the real signal comes once users are actually in it.',
+      },
+    ],
   },
 };
 
-// Primary method + alternatives per quadrant. Each alternative names what it
-// buys and what it leaves unanswered (spec §5.7).
-function baseRecommendation(quadrant, a) {
-  switch (quadrant) {
-    case 'INVEST': {
-      // If problem confidence is also low, don't test a solution to an
-      // unvalidated problem — that's theatre. Discovery comes first.
-      const problemShaky = a.q1 <= 4 || a.q2 <= 4;
-      if (problemShaky) {
-        return {
-          primary: {
-            method: 'Discovery first — then decide whether to evaluate',
-            detail:
-              'Problem confidence is low, so a usability study would be testing a solution to a ' +
-              'problem we haven’t validated. Start with 4–6 discovery conversations or a review of ' +
-              'existing tickets/usage data. If the problem holds up, come back and run the full study.',
-          },
-          alternatives: [
-            {
-              label: 'Moderated usability study, 5–8 real users',
-              buys: 'The full evaluative picture, once the problem is validated.',
-              leaves: 'Premature if the problem itself turns out to be assumed.',
-            },
-            {
-              label: 'Discovery interviews (4–6 users)',
-              buys: 'Whether this problem is worth solving at all.',
-              leaves: 'Says nothing yet about whether this design solves it.',
-            },
-          ],
-        };
-      }
-      return {
-        primary: {
-          method: 'Moderated usability study with real users (5–8 participants)',
-          detail:
-            'The real thing. High risk and low confidence together is exactly what a full study is ' +
-            'for. Don’t compress this one — protect the time for it.',
-        },
-        alternatives: [
-          {
-            label: 'Moderated study, tighter (5 participants)',
-            buys: 'Most of the signal at a smaller recruit.',
-            leaves: 'Thinner coverage of edge cases and less-common paths.',
-          },
-          {
-            label: 'Unmoderated study + follow-up interviews',
-            buys: 'Scale on the task flow, depth on the surprises.',
-            leaves: 'Weaker for anything needing live probing or context.',
-          },
-        ],
-      };
-    }
-    case 'VERIFY':
-      return {
-        primary: {
-          method: 'Focused usability test, 3–5 participants, riskiest task only',
-          detail:
-            'Confidence is high but the stakes are real, so confirm. Point it at the single riskiest ' +
-            'task and nothing else — you’re confirming a belief, not exploring.',
-        },
-        alternatives: [
-          {
-            label: 'Unmoderated test (UserTesting-style)',
-            buys: 'Fast confirmation if the flow is self-explanatory.',
-            leaves: 'No room to probe the "why" when something goes sideways.',
-          },
-          {
-            label: 'Moderated, 3 users on the one risky task',
-            buys: 'Live probing on the exact thing you’re worried about.',
-            leaves: 'Deliberately blind to everything outside that task.',
-          },
-        ],
-      };
-    case 'EXPLORE_CHEAP':
-      return {
-        primary: {
-          method: 'Heuristic evaluation + 2–3 proxy users',
-          detail:
-            'Uncertain, but the downside is small. Get a quick expert read plus a couple of proxy ' +
-            'users, and treat production data as a legitimate next source of truth.',
-        },
-        alternatives: [
-          {
-            label: 'Ship behind a flag and instrument it',
-            buys: 'Real behaviour at real scale, post-launch, cheaply.',
-            leaves: 'You learn after shipping, not before — fine when risk is low.',
-          },
-          {
-            label: 'Design critique / cognitive walkthrough with the team',
-            buys: 'Same-day structured feedback, zero recruitment.',
-            leaves: 'It’s the team’s judgement, not a user’s behaviour.',
-          },
-        ],
-      };
-    case 'SHIP':
-    default:
-      return {
-        primary: {
-          method: 'Heuristic evaluation — 30–45 min, researcher-led, this week',
-          detail:
-            'You’re in good shape, so here’s the fast thing you get: a researcher-led heuristic pass ' +
-            'this week. A second set of expert eyes, no recruitment, no delay to your timeline.',
-        },
-        alternatives: [
-          {
-            label: '1–2 proxy users as a sanity check',
-            buys: 'Extra reassurance if the team wants it.',
-            leaves: 'Won’t surface much you don’t already expect at this confidence.',
-          },
-          {
-            label: 'Ship now, instrument the key task',
-            buys: 'Zero delay, with a post-launch signal to watch.',
-            leaves: 'You’d catch a problem after launch rather than before.',
-          },
-        ],
-      };
-  }
-}
+// Short labels for the matrix grid, keyed by quadrant id. Single source of
+// truth so the matrix and the rest of the app never drift apart.
+export const QUADRANT_SHORT = Object.fromEntries(
+  Object.values(QUADRANTS).map((q) => [q.id, q.short])
+);
 
-// Adjust the recommendation for the access band. Returns an { title, text }
-// note; null when access is Open (any method is viable, nothing to say).
+// Plain-language definitions of the two axes, shown on the result screen.
+export const SCORE_DEFINITIONS = {
+  CONFIDENCE: 'How confident are we that this is the right solution to the right problem?',
+  RISK: 'If the solution doesn’t perform as expected with users, how much does it impact their main Job to be Done?',
+};
+
+// Adjust for the access band. Returns an { title, text } note. Access is scored
+// and flagged separately; this is the plain-language read for the result screen.
 function accessAdjustment(band) {
   if (band === 'open') {
     return {
@@ -169,25 +162,25 @@ function accessAdjustment(band) {
     return {
       title: 'Access: Constrained',
       text:
-        'Real users are reachable but scarce. Favour the lighter end of the options above, lean on ' +
-        'proxies where a proxy will do, and save real-user sessions for the riskiest question.',
+        'Real users are reachable but scarce. Favour the lighter methods above, lean on proxies where a ' +
+        'proxy will do, and save real-user sessions for the riskiest question.',
     };
   }
   return {
     title: 'Access: Blocked',
     text:
-      'Real users are off the table this cycle. Run the closest proxy-based version of the ' +
-      'recommendation — SMEs, CS, implementation, trainers — and log the recruitment gap so it ' +
-      'counts toward the case for standing recruitment infrastructure.',
+      'Real users are off the table this cycle. Run the closest proxy-based methods above — SMEs, CS, ' +
+      'implementation, trainers — and log the recruitment gap so it counts toward the case for standing ' +
+      'recruitment infrastructure.',
   };
 }
 
-// The cheapest thing that would change your mind (spec §5.8). Derived from the
-// biggest genuine uncertainty — the lowest-scoring CONFIDENCE contributor.
-// "Change your mind" means resolving an uncertainty, and uncertainty lives on
-// the confidence axis (risk questions are known stakes, not open questions).
-// Q4 is inverted to its confidence contribution (11 - Q4) so novelty is
-// compared on the same "how sure are we" footing as the rest.
+// The cheapest thing that would change your mind. Derived from the biggest
+// genuine uncertainty — the lowest-scoring CONFIDENCE contributor. "Change your
+// mind" means resolving an uncertainty, and uncertainty lives on the confidence
+// axis (risk questions are known stakes, not open questions). Q4 is inverted to
+// its confidence contribution (11 - Q4) so novelty is compared on the same
+// "how sure are we" footing as the rest.
 const CHANGE_MY_MIND = {
   q1: 'Talk to 3 users or skim 10 support tickets to confirm this problem is real — that’s the biggest open question here.',
   q2: 'Watch 2 users do this task the way they do it today; even a 20-minute call each would resolve the biggest gap.',
@@ -213,11 +206,16 @@ export function cheapestThingToChangeMind(a) {
 
 // Full recommendation bundle for the result screen.
 export function recommend(a, scores) {
-  const base = baseRecommendation(scores.quadrant, a);
+  const quad = QUADRANTS[scores.quadrant];
   return {
-    meta: QUADRANT_META[scores.quadrant],
-    primary: base.primary,
-    alternatives: base.alternatives,
+    meta: {
+      id: quad.id,
+      name: quad.name,
+      short: quad.short,
+      tagline: quad.tagline,
+      description: quad.description,
+    },
+    methods: quad.methods,
     access: accessAdjustment(scores.band),
     changeMind: cheapestThingToChangeMind(a),
   };
