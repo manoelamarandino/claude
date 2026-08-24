@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html style="width: 100%; margin-top: 0 !important; padding-top: 0 !important;">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>seu favorito voltou pro estoque</title>
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td, a, p, h1, h2 { font-family: 'Courier New', Courier, monospace !important; }
+    h1 { font-family: Georgia, 'Times New Roman', serif !important; }
+  </style>
+  <![endif]-->
+  <!--[if !mso]><!-->
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&family=Space+Mono&display=swap" rel="stylesheet">
+  <!--<![endif]-->
+</head>
+<body style="margin: 0; padding: 0; width: 100%; background-color: #F4F0E5; font-family: 'Space Mono', 'Courier New', Courier, monospace;">
+  <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #F4F0E5;">
+    <tr>
+      <td align="center" style="padding: 0;">
+        <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 660px; background-color: #F4F0E5;">
+
+          <!-- ============ HEADER ORA ============ -->
+          <thead>
+            <tr>
+              <th colspan="4" align="center" style="padding: 0; margin: 0;">
+                <!--[if (gte mso 9)|(IE)]><table align="center" border="0" cellspacing="0" cellpadding="0" width="660" style="width:660px;"><tr><td><![endif]-->
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" style="max-width: 660px; background-color: #F4F0E5;">
+                  <tbody>
+                    <tr>
+                      <td style="padding: 20px 36px 0 36px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation">
+                          <tbody><tr><td style="border-top: 1px solid #A38372; line-height: 0; font-size: 0;">&nbsp;</td></tr></tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding: 28px 36px 24px 36px;">
+                        {% if conta.logo %}
+                          <img src="https://cdn.awsli.com.br/{{ conta.logo }}" alt="{{ conta.nome_loja }}" width="150" style="display: block; margin: 0 auto; max-width: 150px; max-height: 70px; height: auto; border: 0;" />
+                        {% else %}
+                          <h1 style="margin: 0; font-family: 'Lora', Georgia, 'Times New Roman', serif; font-size: 40px; font-weight: 400; letter-spacing: 2px; color: #321506; text-align: center;">{{ conta.nome_loja }}</h1>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
+              </th>
+            </tr>
+          </thead>
+          <!-- ============ /HEADER ORA ============ -->
+
+          <!-- ============ CORPO ============ -->
+          <tbody>
+            <tr>
+              <td colspan="4" align="center" style="padding: 0; margin: 0;">
+                <!--[if (gte mso 9)|(IE)]><table align="center" border="0" cellspacing="0" cellpadding="0" width="660" style="width:660px;"><tr><td><![endif]-->
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" style="max-width: 660px; background-color: #F4F0E5;">
+                  <tbody>
+
+                    <!-- sobretítulo / label -->
+                    <tr>
+                      <td style="padding: 16px 36px 0 36px;">
+                        <h2 style="margin: 0; font-family: 'Space Mono', 'Courier New', Courier, monospace; font-size: 12px; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: #A38372; text-align: left;">voltou pro estoque</h2>
+                      </td>
+                    </tr>
+
+                    <!-- título principal -->
+                    <tr>
+                      <td style="padding: 12px 36px 0 36px;">
+                        <h1 style="margin: 0; font-family: 'Lora', Georgia, 'Times New Roman', serif; font-size: 32px; font-weight: 400; line-height: 1.25; color: #321506; text-align: left;">seu favorito voltou pro estoque</h1>
+                      </td>
+                    </tr>
+
+                    <!-- corpo -->
+                    <tr>
+                      <td style="padding: 24px 36px 0 36px;">
+                        <p style="margin: 0; font-family: 'Space Mono', 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.8; color: #A38372; text-align: left;">oi! vimos que você se interessou pela {{ produto.nome }} — e viemos avisar que ela voltou.</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 16px 36px 0 36px;">
+                        <p style="margin: 0; font-family: 'Space Mono', 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.8; color: #A38372; text-align: left;">ela está te esperando no site, no seu tempo.</p>
+                      </td>
+                    </tr>
+
+                    <!-- botão -->
+                    <tr>
+                      <td align="center" style="padding: 32px 36px 0 36px;">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                          <tr>
+                            <td align="center" bgcolor="#321506" style="border-radius: 50px;">
+                              <!--[if mso]>
+                              <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ produto.url }}?utm_source=aviseme&utm_medium=aviseme&utm_campaign=aviseme" style="height:48px;v-text-anchor:middle;width:260px;" arcsize="100%" strokecolor="#321506" fillcolor="#321506">
+                                <w:anchorlock/>
+                                <center style="color:#F4F0E5;font-family:'Courier New',Courier,monospace;font-size:13px;letter-spacing:3px;">CLIQUE PARA VER MAIS</center>
+                              </v:roundrect>
+                              <![endif]-->
+                              <!--[if !mso]><!-->
+                              <a href="{{ produto.url }}?utm_source=aviseme&utm_medium=aviseme&utm_campaign=aviseme" target="_blank" style="display: inline-block; padding: 15px 34px; font-family: 'Space Mono', 'Courier New', Courier, monospace; font-size: 13px; line-height: 1; letter-spacing: 3px; text-transform: uppercase; color: #F4F0E5; text-decoration: none; border-radius: 50px;">clique para ver mais</a>
+                              <!--<![endif]-->
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+
+                    <!-- mensagem opcional -->
+                    {% if custom.mensagem %}
+                    <tr>
+                      <td style="padding: 28px 36px 0 36px;">
+                        <p style="margin: 0; font-family: 'Space Mono', 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.8; color: #A38372; text-align: left;">{{ custom.mensagem }}</p>
+                      </td>
+                    </tr>
+                    {% endif %}
+
+                  </tbody>
+                </table>
+                <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
+              </td>
+            </tr>
+          </tbody>
+          <!-- ============ /CORPO ============ -->
+
+          <!-- ============ FOOTER ORA ============ -->
+          <tfoot>
+            <tr>
+              <td colspan="4" align="center" style="padding: 0; margin: 0;">
+                <!--[if (gte mso 9)|(IE)]><table align="center" border="0" cellspacing="0" cellpadding="0" width="660" style="width:660px;"><tr><td><![endif]-->
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" style="max-width: 660px; background-color: #F4F0E5;">
+                  <tbody>
+                    <tr>
+                      <td style="padding: 24px 36px 0 36px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation">
+                          <tbody><tr><td style="border-top: 1px solid #A38372; line-height: 0; font-size: 0;">&nbsp;</td></tr></tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding: 28px 36px 0 36px;">
+                        <p style="margin: 0; font-family: 'Lora', Georgia, 'Times New Roman', serif; font-size: 15px; font-style: italic; color: #321506;">com prazer, ora.</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding: 18px 36px 0 36px;">
+                        <p style="margin: 0; font-family: 'Space Mono', 'Courier New', Courier, monospace; font-size: 11px; letter-spacing: 1px; color: #A38372;">whatsapp: {{ conta.telefone }}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding: 18px 36px 40px 36px;">
+                        <a href="https://instagram.com/ora__lingerie" style="font-family: 'Space Mono', 'Courier New', Courier, monospace; font-size: 11px; letter-spacing: 2px; color: #A38372; text-decoration: none;">@ora__lingerie</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
+              </td>
+            </tr>
+          </tfoot>
+          <!-- ============ /FOOTER ORA ============ -->
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
